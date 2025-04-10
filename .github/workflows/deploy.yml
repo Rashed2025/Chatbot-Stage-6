@@ -25,20 +25,26 @@ jobs:
       run: |
         pytest tests || echo "Warning: Tests failed or no test suite present"
 
+  port-check:
+    name: Check VM Ports
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install netcat and check ports
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y netcat-openbsd
+        nc -zv ${{ secrets.VM_HOST }} 5000 || echo "Warning: Port 5000 not reachable"
+        nc -zv ${{ secrets.VM_HOST }} 8501 || echo "Warning: Port 8501 not reachable"
+
   deploy:
     name: Deploy to Azure VM
     runs-on: ubuntu-latest
-    needs: test
+    needs: [test, port-check]
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
-
-    - name: Check Required Ports on Azure VM (5000, 8501)
-      run: |
-        sudo apt-get install -y netcat
-        nc -zv ${{ secrets.VM_HOST }} 5000 || echo "Warning: Port 5000 not reachable"
-        nc -zv ${{ secrets.VM_HOST }} 8501 || echo "Warning: Port 8501 not reachable"
 
     - name: Upload Files to Azure VM
       uses: appleboy/scp-action@master

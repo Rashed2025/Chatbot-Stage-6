@@ -24,12 +24,7 @@ import chromadb
 
 load_dotenv()
 
-<<<<<<< HEAD
 KVUri = f"https://chatbotstage6.vault.azure.net"
-=======
-keyVaultName = os.environ["KEY_VAULT_NAME"]
-KVUri = f"https://{keyVaultName}.vault.azure.net"
->>>>>>> 755df4c0a2552124c63f71870b7679cc60e9d5e1
 
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=KVUri, credential=credential)
